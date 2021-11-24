@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
+const uuid = require("uuid");
 
+const uuidv4 = uuid.v4
 
 const userSchema = new mongoose.Schema({
   id: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   lastName: { type: String, required: true },
   password: { type: String, required: true },
@@ -35,9 +37,21 @@ const editUserFavorites = async (req, res) => {
   res.send(user);
 };
 
+const registerUser = async (req, res) => {
+
+  const { name, lastName, password, email  } = req.body;
+
+  const newuser = new UserModel({ id: uuidv4() , name, lastName, password, email });
+
+  await newuser.save();
+
+  res.send(newuser);
+};
+
 const UserService = {
   logIn,
   editUserFavorites,
+  registerUser,
 }
 
 module.exports = UserService;
