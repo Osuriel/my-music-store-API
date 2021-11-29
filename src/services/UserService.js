@@ -43,9 +43,14 @@ const registerUser = async (req, res) => {
 
   const newuser = new UserModel({ id: uuidv4() , name, lastName, password, email });
 
-  await newuser.save();
+  try {
+    await newuser.save();
+    res.send(newuser);
 
-  res.send(newuser);
+  } catch (error){
+    console.log('error: ', error);
+    res.status(500).send("Unable to register user");
+  }
 };
 
 const UserService = {
