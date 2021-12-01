@@ -20,26 +20,31 @@ const logIn = async (req, res) => {
   console.log('req.body: ', req.body);
 
   const { email, password } = req.body;
-  console.log('req.body: ', req.body);
 
   const userFound = await UserModel.findOne({email, password});
-  console.log('userFound: ', userFound);
 
   const token = jwt.sign({ userId: userFound.id, iat: Date.now()  }, 'not so strong private key');
 
   console.log('token: ', token);
 
-    // 1 .How can I send this JWT to the client
-    // 2. but make it so the client doesnt have access to it?
-    // that way no library or hacker will ever have access to it.
+    // 1 .How can I send this JWT to the client - X solution: setting it in the cookies
+    // 2. make sure every request to the server now includes the jwt session token. - X solotion: setting it in the cookies
+    // 3. but make it so the client doesnt have access to it?
+    // that way no library or hacker will ever have access to it. setting the secure and httpOnly flag to true.
 
-  res.cookie('session_token', token, {
-    secure: false,
-    http: false,
+     res.cookie('session_token', token, {
+      httpOnly: true,
+      secure: false,
   }).send(userFound);
+  
 };
 
+const logOut = async (req, res) => res.clearCookie('session_token').send('Logged out successfully');
+
 const editUserFavorites = async (req, res) => {
+  console.log('Cookies: ', JSON.stringify(req.cookies))
+
+  console.log('req.userId: ', req.userId)
 
   const { userId, favorites } = req.body;
 
@@ -72,6 +77,7 @@ const UserService = {
   logIn,
   editUserFavorites,
   registerUser,
+  logOut,
 }
 
 module.exports = UserService;

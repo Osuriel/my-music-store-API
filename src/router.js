@@ -14,6 +14,8 @@ router.get('/product-list', ProductService.fetchAllProducts)
 // User Routes
 router.post('/log-in', UserService.logIn)
 
+router.get('/log-out', UserService.logOut)
+
 router.post('/edit-user-favorites', UserService.editUserFavorites);
 
 router.post('/register-user', UserService.registerUser);

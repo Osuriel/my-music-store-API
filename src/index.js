@@ -4,6 +4,8 @@ const router = require('./router')
 const mongoose = require('mongoose');
 require('dotenv').config();
 var cookieParser = require('cookie-parser')
+const jwt = require('jsonwebtoken');
+
 
 
 const app = express()
@@ -15,11 +17,31 @@ mongoose.connect(process.env.DB_CONNECTION_STRING)
 .catch((error) => console.log(error));
 
 
-app.use(cors({ credentials: true, origin: 'http://mymusicstore.com:3000' }));
+
+app.use(cors({ credentials: true, origin: 'http://mymusicstore.com:3000'}));
 app.use(cookieParser())
 
 
 app.use(express.json())
+
+// user session middleware
+app.use((req, res, next) => {
+  
+  const sessionToken = req.cookies.session_token;
+
+  if(sessionToken){
+    try{
+      // verify token to make sure user is logged in.
+      const {userId, iat} = jwt.verify(sessionToken, 'not so strong private key');
+      // TODO: implement expiration.
+      console.log(iat);
+      req.userId = userId;
+    } catch(error) {
+      console.log('error: ', error);
+    }
+  }
+  next();
+})
 
 
 
