@@ -26,7 +26,6 @@ app.use(express.json())
 
 // user session middleware
 app.use((req, res, next) => {
-  
   const sessionToken = req.cookies.session_token;
 
   if(sessionToken){

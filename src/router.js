@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const express = require('express')
 const ProductService = require("./services/ProductService");
 const UserService = require("./services/UserService");
+const PermissionService = require('./services/PermissionService');
 
 console.log('ProductService: ', ProductService)
 
@@ -20,16 +21,17 @@ router.post('/edit-user-favorites', UserService.editUserFavorites);
 
 router.post('/register-user', UserService.registerUser);
 
-router.post('/upload-product', (req, res) => {
-  const { sessionToken } = req.body;
+router.post('/upload-product', async (req, res) => {
+ // TODO: Implement upload-product route for real. right now were just using it to check if our 'checkAdminPermission' function works.
 
-  try{
-    // verify token to make sure user is logged in.
-    const {userId, iat} = jwt.verify(sessionToken, 'not so strong private key');
-    res.send('user is logged in');
+  try{ 
+    await PermissionService.checkAdminPermission(req);
+
+    res.send('user is logged in as an admin.');
   } catch(error) {
+    console.log('error: ', error);
     res.statusCode = 500;
-    res.send('user is NOT logged in');
+    res.send('user is NOT logged in as an admin');
   }
 });
 

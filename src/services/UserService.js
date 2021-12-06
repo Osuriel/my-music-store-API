@@ -1,31 +1,17 @@
 const mongoose = require('mongoose');
 const uuid = require("uuid");
 const jwt = require('jsonwebtoken');
+const UserController = require('../controllers/UserController');
 
 const uuidv4 = uuid.v4
 
-const userSchema = new mongoose.Schema({
-  id: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  name: { type: String, required: true },
-  lastName: { type: String, required: true },
-  password: { type: String, required: true },
-  favoriteItems: { type: Array, default: []},
-  isAdmin: { type: Boolean, default: false },
-});
-
-const UserModel = mongoose.model('User', userSchema);
-
 const logIn = async (req, res) => {
-  console.log('req.body: ', req.body);
-
   const { email, password } = req.body;
 
-  const userFound = await UserModel.findOne({email, password});
+  const userFound = await UserController.UserModel.findOne({email, password});
+  console.log('user to log in: ', userFound )
 
   const token = jwt.sign({ userId: userFound.id, iat: Date.now()  }, 'not so strong private key');
-
-  console.log('token: ', token);
 
     // 1 .How can I send this JWT to the client - X solution: setting it in the cookies
     // 2. make sure every request to the server now includes the jwt session token. - X solotion: setting it in the cookies
