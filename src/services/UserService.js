@@ -11,7 +11,7 @@ const logIn = async (req, res) => {
   const userFound = await UserController.UserModel.findOne({email, password});
   console.log('user to log in: ', userFound )
 
-  const token = jwt.sign({ userId: userFound.id, iat: Date.now()  }, 'not so strong private key');
+  const token = jwt.sign({ userId: userFound.id, iat: Date.now()  }, process.env.MY_MUSIC_STORE_PRIVATE_SESSION_KEY);
 
     // 1 .How can I send this JWT to the client - X solution: setting it in the cookies
     // 2. make sure every request to the server now includes the jwt session token. - X solotion: setting it in the cookies

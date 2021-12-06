@@ -31,7 +31,7 @@ app.use((req, res, next) => {
   if(sessionToken){
     try{
       // verify token to make sure user is logged in.
-      const {userId, iat} = jwt.verify(sessionToken, 'not so strong private key');
+      const {userId, iat} = jwt.verify(sessionToken, process.env.MY_MUSIC_STORE_PRIVATE_SESSION_KEY);
       // TODO: implement expiration.
       console.log(iat);
       req.userId = userId;
